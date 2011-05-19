@@ -23,7 +23,9 @@ stop () ->
 init (Roots) ->
     Rs = [filename: absname (R) || R <- Roots],
     Printer = spawn_link (text_printer, init, [standard_io]),
-    Integrator = spawn_link (integrator, init, [Printer, Rs, []]),
+    GreenBar = spawn_link (green_bar, init, []),
+    Renderers = spawn_link (renderers, init, [[Printer, GreenBar]]),
+    Integrator = spawn_link (integrator, init, [Renderers, Rs, []]),
     F = fun (E) -> Integrator ! E end,
     Ws = [spawn_link (directory_watcher, init_recursive, [R, F]) || R <- Rs],
     loop ({Integrator, Printer, Ws}).
