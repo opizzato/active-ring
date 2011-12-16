@@ -13,7 +13,10 @@ wait (Status) ->
         {get_status, Pid} -> 
             Pid ! Status,
             wait (Status);
-        {totals, {_,_,E,_,_,F}} when E > 0 orelse F > 0 -> 
+        {totals, {_,_,E,_,_,_}} when E > 0 -> 
+            yellow (), 
+            wait (yellow);
+        {totals, {_,_,_,_,_,F}} when F > 0 -> 
             red (), 
             wait (red);
         {totals, {M,C,0,T,P,0}} when M =:= C andalso T =:= P -> 
@@ -29,6 +32,7 @@ wait (Status) ->
 green()-> set_color({56,177,26}).
 red()-> set_color({255,0,0}).
 grey()-> set_color({179,171,110}).
+yellow()-> set_color({254,244,119}).
 
 set_color({R,G,B}) ->
     Frame = get (frame),
